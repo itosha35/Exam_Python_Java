@@ -89,7 +89,7 @@ def show_on_screen(contacts: list) -> None:
         pretty_text += f'Заметка №{num}:\n'
         pretty_text += '\n'.join(
             f'{decode_keys[k]} {v}' for k, v in elem.items())
-        pretty_text += '\n________\n'
+        pretty_text += '\n**********\n'
     print(pretty_text)
 
 
@@ -119,10 +119,10 @@ def menu():
     try:
         choice = int(choice)
         if choice < 0 or len(commands) < choice:
-            raise Exception('Такой команды пока нет ;(')
+            raise Exception('Такой команды нет')
         choice -= 1
     except ValueError as ex:
-        print('Я вас не понял, повторите...')
+        print('Введите команду заново...')
         menu()
     except Exception as ex:
         print(ex)
