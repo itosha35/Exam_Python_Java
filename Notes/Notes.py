@@ -94,7 +94,6 @@ def show_on_screen(contacts: list) -> None:
 
 
 def new_notes(notes: list) -> None:
-    # информации может быть больше
     notes.append(
         dict(
             heading=input('Введите название заметки:\n>>> ').upper(),
@@ -132,33 +131,36 @@ def menu():
         return choice
 
 
-def date_interval() -> None:
-    pass
+def date_interval(t1, t2, date) -> None:
+    t1 = datetime.datetime.strptime(t1, '%d.%m.%Y')
+    t2 = datetime.datetime.strptime(t2, '%d.%m.%Y')
+    date = datetime.datetime.strptime(date, '%d.%m.%Y')
+    if (t1 <= date <= t2):
+        return True
+    else:
+        return False
 
 
 def main() -> None:
+    
     data = load_from_file()
 
     command = menu()
     if command == 0:
-        show_on_screen(data)
-        main()
+        show_on_screen(data)        
     elif command == 1:
-        find_notes(data)
-        main()
+        find_notes(data)        
     elif command == 2:
-        new_notes(data)
-        main()
+        new_notes(data)        
     elif command == 3:
-        save_change_notes(data)
-        main()
+        save_change_notes(data)        
     elif command == 4:
-        del_notes(data)
-        main()
-    elif command == 5:     
+        del_notes(data)        
+    elif command == 5:
         save_to_file(data)
-        print('Конец программы!')   
-
+        print('Конец программы!')
+    save_to_file(data)
+    main()
 
 if __name__ == '__main__':
     main()
