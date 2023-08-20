@@ -35,10 +35,9 @@ def save_change_notes(notes: list) -> dict:
         if value == '1':
             found[0]['heading'] = input(
                 'Введите название заметки:\n>>> ').upper()
-            found[0]['data'] = f"внесены изменения: {datetime.datetime.now().replace(microsecond=0)}"
         elif value == '2':
             found[0]['body'] = input('Введите текст заметки:\n>>> ').upper()
-            found[0]['data'] = f"внесены изменения: {datetime.datetime.now().replace(microsecond=0)}"
+        found[0]['data'] = f"внесены изменения: {datetime.date.today()}"
     else:
         print('Ничего не нашли ;(')
         return {}
@@ -78,7 +77,7 @@ def save_to_file(contact: list) -> None:
         json.dump(contact, file, ensure_ascii=False)
 
 
-def show_on_screen(contacts: list) -> None:
+def show_on_screen(contacts: list, filter: dict) -> None:
     decode_keys = dict(
         heading='Название заметки:',
         body='Текст заметки:',
@@ -86,11 +85,21 @@ def show_on_screen(contacts: list) -> None:
     )
     pretty_text = str()
     for num, elem in enumerate(contacts, 1):
-        pretty_text += f'Заметка №{num}:\n'
-        pretty_text += '\n'.join(
-            f'{decode_keys[k]} {v}' for k, v in elem.items())
-        pretty_text += '\n**********\n'
-    print(pretty_text)
+        if (len(filter) != 0):
+            if date_interval(filter["start_date"], filter["end_date"], elem["data"]):
+                pretty_text += f'Заметка №{num}:\n'
+                pretty_text += '\n'.join(
+                    f'{decode_keys[k]} {v}' for k, v in elem.items())
+                pretty_text += '\n**********\n'
+        else:
+            pretty_text += f'Заметка №{num}:\n'
+            pretty_text += '\n'.join(
+                f'{decode_keys[k]} {v}' for k, v in elem.items())
+            pretty_text += '\n**********\n'
+    if (len(pretty_text) != 0):
+        print(pretty_text)
+    else:
+        print("Нет элементов для отображения")
 
 
 def new_notes(notes: list) -> None:
@@ -98,7 +107,7 @@ def new_notes(notes: list) -> None:
         dict(
             heading=input('Введите название заметки:\n>>> ').upper(),
             body=input('Введите текст заметки:\n>>> ').upper(),
-            data=str(datetime.datetime.now().replace(microsecond=0)),
+            data=str(datetime.date.today()),
         )
     )
 
@@ -112,7 +121,7 @@ def menu():
         'Удалить заметку',
         'Выйти'
     ]
-    print('Укажите номер команды:')
+    print('Выберите действие:')
     print('\n'.join(f'{n}. {v}' for n, v in enumerate(commands, 1)))
     choice = input('>>> ')
 
@@ -131,43 +140,50 @@ def menu():
         return choice
 
 
-def date_interval(t1, t2, date) -> None:
-    t1 = datetime.datetime.strptime(t1, '%d.%m.%Y')
-    t2 = datetime.datetime.strptime(t2, '%d.%m.%Y')
-    date = datetime.datetime.strptime(date, '%d.%m.%Y')
-    if (t1 <= date <= t2):
+def date_interval(t1, t2, d) -> bool:
+    tt1 = datetime.datetime.strptime(t1, "%Y-%m-%d")
+    tt2 = datetime.datetime.strptime(t2, "%Y-%m-%d")
+    tdate = datetime.datetime.strptime(d, "%Y-%m-%d")
+    if (tt1 <= tdate <= tt2):
         return True
     else:
         return False
 
 
 def main() -> None:
-    
     data = load_from_file()
     command = menu()
     if command == 0:
-        show_on_screen(data)
+        if (input("Выбрать интервал дат? (Y_1 / N_0): ") in ['Y', 'y', '1']):
+            ff = dict()
+            ff["start_date"] = input(
+                "Укажите начало интревала ГОД-МЕСЯЦ-ДЕНЬ: ")
+            ff["end_date"] = input("Укажите конец интервала ГОД-МЕСЯЦ-ДЕНЬ: ")
+            show_on_screen(data, ff)
+        else:
+            show_on_screen(data, dict())
         save_to_file(data)
-        main()       
+        main()
     elif command == 1:
-        find_notes(data)  
+        find_notes(data)
         save_to_file(data)
-        main()      
+        main()
     elif command == 2:
         new_notes(data)
         save_to_file(data)
-        main()        
+        main()
     elif command == 3:
-        save_change_notes(data) 
+        save_change_notes(data)
         save_to_file(data)
-        main()       
+        main()
     elif command == 4:
         del_notes(data)
         save_to_file(data)
-        main()        
+        main()
     elif command == 5:
         save_to_file(data)
-        print('Конец программы!')    
+        print('Конец программы!')
+
 
 if __name__ == '__main__':
     main()
