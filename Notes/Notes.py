@@ -144,23 +144,30 @@ def date_interval(t1, t2, date) -> None:
 def main() -> None:
     
     data = load_from_file()
-
     command = menu()
     if command == 0:
-        show_on_screen(data)        
+        show_on_screen(data)
+        save_to_file(data)
+        main()       
     elif command == 1:
-        find_notes(data)        
+        find_notes(data)  
+        save_to_file(data)
+        main()      
     elif command == 2:
-        new_notes(data)        
+        new_notes(data)
+        save_to_file(data)
+        main()        
     elif command == 3:
-        save_change_notes(data)        
+        save_change_notes(data) 
+        save_to_file(data)
+        main()       
     elif command == 4:
-        del_notes(data)        
+        del_notes(data)
+        save_to_file(data)
+        main()        
     elif command == 5:
         save_to_file(data)
-        print('Конец программы!')
-    save_to_file(data)
-    main()
+        print('Конец программы!')    
 
 if __name__ == '__main__':
     main()
