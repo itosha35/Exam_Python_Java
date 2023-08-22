@@ -29,7 +29,7 @@ def del_notes(notes: list) -> dict:
 def save_change_notes(notes: list) -> dict:
     found = find_notes(notes)
     if found:
-        show_on_screen(found)
+        show_on_screen(found, dict())
         print("Что желаете изменить: название[1], содержание[2]?")
         value = input('Введите параметр для изменения:\n>>>').lower()
         if value == '1':
