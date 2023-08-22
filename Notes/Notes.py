@@ -47,7 +47,7 @@ def find_notes(notes: list) -> dict:
     heading = input('Введите название заметки:\n>>> ').upper()
     found = list(filter(lambda el: heading in el['heading'], notes))
     if found:
-        show_on_screen(found)
+        show_on_screen(found, dict())
         return found
     else:
         print('Ничего не нашли ;(')
